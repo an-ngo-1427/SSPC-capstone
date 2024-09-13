@@ -5,6 +5,7 @@ from .models import Appointment,Companion,User,Owner
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate, login,logout
+from django.db import IntegrityError
 import json
 from django.core.serializers import serialize
 # Create your views here.
@@ -31,7 +32,10 @@ def signUp(request):
         response = JsonResponse({"user":newUser.to_dict()})
         return response
     except ValueError:
-        JsonResponse({'error':"there was an error"})
+        return JsonResponse({'error':"there was an error"})
+    except IntegrityError as e:
+        print('this is error',e.args[0])
+        return JsonResponse({'error':e.args[0]})
 
 def logIn(request):
     data = request.body
