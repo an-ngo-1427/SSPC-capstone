@@ -2,16 +2,11 @@ from django.db import models
 # from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
-
-    # id = models.IntegerField(primary_key = True)
-    # username = models.CharField(max_length=50)
-    # email = models.EmailField(null=False)
-    # hashedPassword = models.CharField(max_length=200)
     photo_url = models.CharField(null=True,max_length=500)
-    # firstname = models.CharField(null=False,max_length=100)
-    # lastname = models.CharField(null=False,max_length=100)
-    # created_at = models.DateField()
-    # updated_at = models.DateField()
+    class Meta :
+        constraints = [
+            models.UniqueConstraint(fields=['email'],name='unique_active',violation_error_message='user with that email already exists')
+        ]
 
     def to_dict(self):
         return{
@@ -90,7 +85,7 @@ class Appointment(models.Model):
     def to_dict(self):
         return{
             "id":self.id,
-            "companion_id":self.companion,
+            "companion":self.companion.to_dict(),
             "appointment_address":self.appointment_address,
             "walker": self.walker.to_dict(),
             "owner":self.owner.to_dict(),
