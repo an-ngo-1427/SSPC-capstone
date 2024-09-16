@@ -83,12 +83,18 @@ class OwnerAppointmentsView(View):
         companionId= request.POST['companionId']
         walkerId  = request.POST['walkerId']
 
-        objTesting = {**request.POST,'testing':1,'testing2':2}
-        print(objTesting)
+        appointmentObj = request.POST.dict()
+
         companion = Companion.objects.get(pk = companionId)
         owner = Owner.objects.get(username = request.user)
         walker = Walker.objects.get(pk = walkerId)
-        # appointmentForm = AppointmentForm({**request.POST,companion:companion,owner:owner,walker:walker})
+
+        appointmentObj['companion'] = companion
+        appointmentObj['owner'] = owner
+        appointmentObj['walker'] = walker
+        appointmentForm = AppointmentForm(appointmentObj)
+
+        appointmentForm.is_valid()
 
 
 class WalkerAppointmentsView(View):
