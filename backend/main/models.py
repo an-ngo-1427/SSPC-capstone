@@ -20,8 +20,8 @@ class User(AbstractUser):
 class Owner(models.Model):
     id = models.IntegerField(primary_key = True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def to_dict(self):
         return{
@@ -35,8 +35,8 @@ class Walker(models.Model):
     bio = models.CharField(max_length=500)
     rating = models.IntegerField(null=True)
     certified = models.BooleanField(null=False)
-    # created_at = models.DateField(auto_now_add=True)
-    # updated_at = models.DateField(auto_now = True)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now = True)
 
     def to_dict(self):
         return{
@@ -49,15 +49,15 @@ class Walker(models.Model):
 
 class Companion(models.Model):
     id = models.IntegerField(primary_key=True)
-    walkers = models.ManyToManyField(Walker,related_name='companions')
+    name = models.CharField(null=False,max_length=150)
     owner = models.ForeignKey(Owner,on_delete=models.CASCADE)
     breed = models.CharField(null = False,max_length=50)
     weight = models.FloatField(null = False)
     age = models.IntegerField(null=False)
     companion_notes = models.CharField(null=True,max_length=500)
     pet_address = models.CharField(null=False,max_length=500)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def to_dict(self):
         return{
@@ -68,7 +68,7 @@ class Companion(models.Model):
             "comapanion_notes":self.companion_notes,
             "pet_address":self.pet_address,
             "owner" :self.owner.to_dict(),
-            "walkers" : [walker.to_dict() for walker in self.walkers]
+            "name" : self.name
         }
 
 class Appointment(models.Model):
@@ -77,14 +77,16 @@ class Appointment(models.Model):
     appointment_address = models.CharField(max_length=500)
     walker = models.ForeignKey(Walker,on_delete=models.CASCADE)
     owner = models.ForeignKey(Owner,on_delete=models.CASCADE)
-    start_time = models.DateField(null=False)
-    end_time = models.DateField(null=False)
+    start_time = models.DateTimeField(null=False)
+    end_time = models.DateTimeField(null=False)
     status = models.CharField(null=False,max_length=100)
     appointment_notes = models.CharField(null=True,max_length=500)
     type = models.CharField(null=False,max_length=100)
     media_url = models.CharField(null=True,max_length=500)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 
     def to_dict(self):
         return{
@@ -107,8 +109,8 @@ class Review(models.Model):
     appointment = models.ForeignKey(Appointment,on_delete=models.CASCADE)
     comments = models.CharField(max_length=500)
     rating = models.IntegerField(null=False)
-    created_at = models.DateField(auto_now_add=True)
-    updated_at = models.DateField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def to_dict(self):
         return{

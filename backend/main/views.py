@@ -9,6 +9,8 @@ from django.db import IntegrityError
 from django.core.exceptions import ValidationError
 from .validations.UserForm import UserForm
 from .validations.WalkerForm import WalkerForm
+from .validations.AppointmentForm import AppointmentForm
+from .validations.CompanionForm import CompanionForm
 import json
 from django.core.serializers import serialize
 # Create your views here.
@@ -24,7 +26,6 @@ def signUp(request):
         errObj = {}
         errors = userForm.errors.as_data()
         for field,error in errors.items():
-            print(error[0])
             errObj[field] = error[0].message
         return JsonResponse({'error':errObj},status=400)
     else:
@@ -35,6 +36,7 @@ def signUp(request):
         last_name = request.POST['last_name']
 
         newUser = User.objects.create_user(username,email,password,first_name=first_name,last_name = last_name)
+        Owner.objects.create(user=newUser)
         login(request,newUser)
         return JsonResponse(newUser.to_dict())
 
@@ -78,9 +80,16 @@ class OwnerAppointmentsView(View):
             return JsonResponse({'error':'owner could not be found'})
 
     def post(self,request):
-        companionId, walkerId, ownerId = request.POST
+        companionId= request.POST['companionId']
+        walkerId  = request.POST['walkerId']
+
+        objTesting = {**request.POST,'testing':1,'testing2':2}
+        print(objTesting)
         companion = Companion.objects.get(pk = companionId)
-        print(companionId)
+        owner = Owner.objects.get(username = request.user)
+        walker = Walker.objects.get(pk = walkerId)
+        # appointmentForm = AppointmentForm({**request.POST,companion:companion,owner:owner,walker:walker})
+
 
 class WalkerAppointmentsView(View):
     def get(self,request,*args,**kwargs):
@@ -116,6 +125,8 @@ class WalkersView(View):
                 errors = walkerForm.errors.as_data()
                 for field,error in errors.items():
                     errObj[field] = error[0].message
+
+                print('this is error',errObj)
                 return JsonResponse({'error':errObj})
         except User.DoesNotExist:
             return JsonResponse({'error':'user not found'},status = 404)
@@ -135,8 +146,29 @@ class OneAppointmentView(View):
         companionId,appointment_address,walkerId,ownerId,start_time,end_time,status,appointment_notes,type,media_url = request.POST
         print(companionId)
 class CompanionsView(View):
-    def get(self,request,*args,**kwargs):
-        return
+    def post(self,request):
+        try:
+            user = User.objects.get(username = request.user)
+            owner = Owner.objects.get(user = user)
+            obj = request.POST.dict()
+            obj['owner'] = owner
+
+            print(obj)
+            companionForm = CompanionForm(obj)
+
+            if(companionForm.is_valid()):
+                companion = companionForm.save()
+                return JsonResponse(companion.to_dict())
+            else:
+                errObj = {}
+                errors = companionForm.errors.as_data()
+                for field,error in errors.items():
+                    print(field,error)
+                    errObj[field] = error[0].message
+                return JsonResponse(errObj,status = 400)
+        except Owner.DoesNotExist:
+            return JsonResponse({'error':'owner could not be found'},status = 404)
+
 
 class OneCompanionView(View):
     def get(self,request,*args,**kwargs):
