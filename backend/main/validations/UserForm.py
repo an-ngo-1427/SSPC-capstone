@@ -9,4 +9,4 @@ class UserForm(forms.ModelForm):
         model = User
 
         # Custom fields
-        fields =["username", "email",'first_name','last_name']
+        fields =["username", "email",'first_name','last_name','password']

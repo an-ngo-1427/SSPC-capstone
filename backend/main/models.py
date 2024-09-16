@@ -20,8 +20,8 @@ class User(AbstractUser):
 class Owner(models.Model):
     id = models.IntegerField(primary_key = True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    created_at = models.DateField()
-    updated_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
 
     def to_dict(self):
         return{
@@ -30,11 +30,13 @@ class Owner(models.Model):
         }
 
 class Walker(models.Model):
-    id =models.IntegerField(primary_key = True)
+    id = models.IntegerField(primary_key = True)
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     bio = models.CharField(max_length=500)
     rating = models.IntegerField(null=True)
     certified = models.BooleanField(null=False)
+    # created_at = models.DateField(auto_now_add=True)
+    # updated_at = models.DateField(auto_now = True)
 
     def to_dict(self):
         return{
@@ -54,8 +56,8 @@ class Companion(models.Model):
     age = models.IntegerField(null=False)
     companion_notes = models.CharField(null=True,max_length=500)
     pet_address = models.CharField(null=False,max_length=500)
-    created_at = models.DateField()
-    updated_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
 
     def to_dict(self):
         return{
@@ -81,6 +83,8 @@ class Appointment(models.Model):
     appointment_notes = models.CharField(null=True,max_length=500)
     type = models.CharField(null=False,max_length=100)
     media_url = models.CharField(null=True,max_length=500)
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
 
     def to_dict(self):
         return{
@@ -103,8 +107,8 @@ class Review(models.Model):
     appointment = models.ForeignKey(Appointment,on_delete=models.CASCADE)
     comments = models.CharField(max_length=500)
     rating = models.IntegerField(null=False)
-    created_at = models.DateField()
-    updated_at = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
 
     def to_dict(self):
         return{
