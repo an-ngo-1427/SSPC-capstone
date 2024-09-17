@@ -1,25 +1,35 @@
-from django.shortcuts import render
+
 from django.views import View
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse
 from .models import Appointment,Companion,User,Owner,Walker
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate, login,logout
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from .validations.UserForm import UserForm
 from .validations.WalkerForm import WalkerForm
 from .validations.AppointmentForm import AppointmentForm
 from .validations.CompanionForm import CompanionForm
 import json
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.utils.functional import wraps
+def auth_decorator(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        # code to be executed before the view
+        if(not request.user.is_authenticated):
+            return JsonResponse({'error':'Forbidden'},status=403)
+        response = view_func(request, *args, **kwargs)
+        # code to be executed after the view
+        return response
+    return wrapper
 # Create your views here.
 @ensure_csrf_cookie
 def getCsurf(request):
     cookies = request.COOKIES.get('csrftoken')
     response = JsonResponse({'csrfToken':cookies})
     return response
-
+@ensure_csrf_cookie
 def signUp(request):
     userForm = UserForm(request.POST)
     if(not userForm.is_valid()):
@@ -39,16 +49,14 @@ def signUp(request):
         Owner.objects.create(user=newUser)
         login(request,newUser)
         return JsonResponse(newUser.to_dict())
-
+@ensure_csrf_cookie
 def logIn(request):
     # data = request.body
     # dataObj = json.loads(data)
     username = request.POST['username']
     password = request.POST['password']
-    print(request.user)
-    print(username,password)
     user = authenticate(request,username = username,password = password)
-    print(user)
+
     if user is not None:
         login(request,user)
         request.session.update({'user':user.to_dict()})
@@ -66,6 +74,7 @@ def signOut(request):
 
 
 class OwnerAppointmentsView(View):
+    @method_decorator(auth_decorator)
     def get(self,request):
         data = json.loads(request.body)
         if('ownerId' not in data):
@@ -78,7 +87,7 @@ class OwnerAppointmentsView(View):
             return response
         except Owner.DoesNotExist:
             return JsonResponse({'error':'owner could not be found'})
-
+    @method_decorator(auth_decorator)
     def post(self,request):
         companionId= request.POST['companionId']
         walkerId  = request.POST['walkerId']
@@ -109,6 +118,7 @@ class OwnerAppointmentsView(View):
 
 
 class WalkerAppointmentsView(View):
+    @method_decorator(auth_decorator)
     def get(self,request,*args,**kwargs):
         data = json.loads(request.body)
         if ('walkerId' not in data):
@@ -120,11 +130,13 @@ class WalkerAppointmentsView(View):
             return JsonResponse({'appointments':[appointment.to_dict() for appointment in appointments]})
         except Walker.DoesNotExist:
             return JsonResponse({'error':'walker not found'})
+
 class WalkersView(View):
     def get(self,request):
-        walkers = Walker.objects.all().order_by('start_time')
+        walkers = Walker.objects.all()
         return JsonResponse({'walkers':[walker.to_dict() for walker in walkers]})
 
+    @method_decorator(auth_decorator)
     def post(self,request):
 
         try:
@@ -149,24 +161,30 @@ class WalkersView(View):
 
 
 class OneAppointmentView(View):
+    @method_decorator(auth_decorator)
     def get(self,request,*args,**kwargs):
         appointmentId = kwargs['id']
         try:
             appointment = Appointment.objects.get(pk=appointmentId)
+            appointment = get_object_or_404(Appointment,owner__user__username = request.user)
             return JsonResponse(appointment.to_dict())
         except Appointment.DoesNotExist:
             return JsonResponse({'message':'appointment not found'},status=404)
 
-
+    @method_decorator(auth_decorator)
     def post(self,request):
         companionId,appointment_address,walkerId,ownerId,start_time,end_time,status,appointment_notes,type,media_url = request.POST
         print(companionId)
 
 class CompanionsView(View):
+
+    @method_decorator(auth_decorator)
     def get(self,request):
         user = get_object_or_404(User,username = request.user)
         companions = Companion.objects.filter(owner__user=user)
         return JsonResponse({'companions':[companion.to_dict() for companion in companions]})
+
+    @method_decorator(auth_decorator)
     def post(self,request):
         try:
             user = User.objects.get(username = request.user)
@@ -174,17 +192,16 @@ class CompanionsView(View):
             obj = request.POST.dict()
             obj['owner'] = owner
 
-            print(obj)
             companionForm = CompanionForm(obj)
 
             if(companionForm.is_valid()):
-                companion = companionForm.save()
-                return JsonResponse(companion.to_dict())
+                companionForm.save()
+                companions = Companion.objects.filter(owner=owner)
+                return JsonResponse({'companions':[companion.to_dict() for companion in companions]},status=201)
             else:
                 errObj = {}
                 errors = companionForm.errors.as_data()
                 for field,error in errors.items():
-                    print(field,error)
                     errObj[field] = error[0].message
                 return JsonResponse(errObj,status = 400)
         except Owner.DoesNotExist:
@@ -197,3 +214,11 @@ class OneCompanionView(View):
 
 
 # class
+# def auth_decorator(view_func):
+#     def wrapper(request, *args, **kwargs):
+#         # code to be executed before the view
+#         print(request.user)
+#         response = view_func(request, *args, **kwargs)
+#         # code to be executed after the view
+#         return response
+#     return wrapper

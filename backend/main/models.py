@@ -2,7 +2,7 @@ from django.db import models
 # from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
-    photo_url = models.CharField(null=True,max_length=500)
+    photo_url = models.CharField(blank=True,max_length=500)
     class Meta :
         constraints = [
             models.UniqueConstraint(fields=['email'],name='unique_active',violation_error_message='user with that email already exists')
@@ -32,7 +32,7 @@ class Owner(models.Model):
 class Walker(models.Model):
     id = models.IntegerField(primary_key = True)
     user = models.OneToOneField(User,on_delete=models.CASCADE)
-    bio = models.CharField(max_length=500)
+    bio = models.CharField(blank=True,max_length=500)
     rating = models.IntegerField(null=True)
     certified = models.BooleanField(null=False)
     # created_at = models.DateTimeField(auto_now_add=True)
@@ -54,10 +54,10 @@ class Companion(models.Model):
     breed = models.CharField(null = False,max_length=50)
     weight = models.FloatField(null = False)
     age = models.IntegerField(null=False)
-    companion_notes = models.CharField(null=True,max_length=500)
+    companion_notes = models.CharField(blank=True,max_length=500)
     pet_address = models.CharField(null=False,max_length=500)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now=True)
 
     def to_dict(self):
         return{
@@ -80,9 +80,9 @@ class Appointment(models.Model):
     start_time = models.DateTimeField(null=False)
     end_time = models.DateTimeField(null=False)
     status = models.CharField(null=False,max_length=100)
-    appointment_notes = models.CharField(null=True,max_length=500)
-    type = models.CharField(null=False,max_length=100)
-    media_url = models.CharField(null=True,max_length=500)
+    appointment_notes = models.CharField(blank=True,max_length=500)
+    type = models.CharField(blank=True,max_length=100)
+    media_url = models.CharField(blank=True,max_length=500)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -107,7 +107,7 @@ class Review(models.Model):
     id = models.IntegerField(primary_key=True)
     author = models.OneToOneField(User,on_delete=models.CASCADE)
     appointment = models.ForeignKey(Appointment,on_delete=models.CASCADE)
-    comments = models.CharField(max_length=500)
+    comments = models.CharField(blank=True,max_length=500)
     rating = models.IntegerField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
