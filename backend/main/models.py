@@ -33,7 +33,7 @@ class Walker(models.Model):
     id = models.IntegerField(primary_key = True)
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     bio = models.CharField(blank=True,max_length=500)
-    rating = models.IntegerField(null=True)
+    rating = models.IntegerField(blank=True,null=True)
     certified = models.BooleanField(null=False)
     # created_at = models.DateTimeField(auto_now_add=True)
     # updated_at = models.DateTimeField(auto_now = True)
@@ -73,13 +73,13 @@ class Companion(models.Model):
 
 class Appointment(models.Model):
     id = models.IntegerField(primary_key=True)
-    companion = models.ForeignKey(Companion, on_delete=models.CASCADE)
-    appointment_address = models.CharField(max_length=500)
-    walker = models.ForeignKey(Walker,on_delete=models.CASCADE)
-    owner = models.ForeignKey(Owner,on_delete=models.CASCADE)
-    start_time = models.DateTimeField(null=False)
-    end_time = models.DateTimeField(null=False)
-    status = models.CharField(null=False,max_length=100)
+    companion = models.ForeignKey(Companion,null=True,blank=True, on_delete=models.CASCADE)
+    appointment_address = models.CharField(blank=True,max_length=500)
+    walker = models.ForeignKey(Walker,null=True,blank=True,on_delete=models.CASCADE)
+    owner = models.ForeignKey(Owner,null = True,blank=True,on_delete=models.CASCADE)
+    start_time = models.DateTimeField(null=True,blank=True)
+    end_time = models.DateTimeField(null=True,blank=True)
+    status = models.CharField(blank=True,max_length=100)
     appointment_notes = models.CharField(blank=True,max_length=500)
     type = models.CharField(blank=True,max_length=100)
     media_url = models.CharField(blank=True,max_length=500)
@@ -91,10 +91,10 @@ class Appointment(models.Model):
     def to_dict(self):
         return{
             "id":self.id,
-            "companion":self.companion.to_dict(),
+            "companion":self.companion if not self.companion else self.companion.to_dict(),
             "appointment_address":self.appointment_address,
-            "walker": self.walker.to_dict(),
-            "owner":self.owner.to_dict(),
+            "walker": self.walker if not self.walker else self.walker.to_dict(),
+            "owner":self.owner if not self.owner else self.owner.to_dict(),
             "start_time":self.start_time,
             "end_time":self.end_time,
             "status":self.status,

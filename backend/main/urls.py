@@ -9,6 +9,6 @@ urlpatterns = [
     path('companions/<int:id>/',OneCompanionView.as_view()),
     path('owner/appointments/',OwnerAppointmentsView.as_view(),name='appointments'),
     path('walker/appointments/',WalkerAppointmentsView.as_view(),name='appointments'),
-    path('appointments/<int:id/',OneAppointmentView.as_view(),name='one_appointment'),
+    path('appointments/<int:id>/',OneAppointmentView.as_view(),name='one_appointment'),
     path('walkers/',WalkersView.as_view(),name='walkers')
 ]
