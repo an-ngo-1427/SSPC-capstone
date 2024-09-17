@@ -71,8 +71,8 @@ class OwnerAppointmentsView(View):
         if('ownerId' not in data):
             return JsonResponse({'error':'bad request'})
         try:
-            ownerId = data['ownerId']
-            owner = Owner.objects.get(pk=ownerId)
+            owner = Owner.objects.get(user__username = request.user)
+            print(owner)
             appointments = Appointment.objects.filter(owner = owner)
             response = JsonResponse({"appointments":[appointment.to_dict() for appointment in appointments]})
             return response
@@ -88,13 +88,24 @@ class OwnerAppointmentsView(View):
         companion = Companion.objects.get(pk = companionId)
         owner = Owner.objects.get(user__username=request.user)
         walker = Walker.objects.get(pk = walkerId)
-        print('entered')
+
         appointmentObj['companion'] = companion
         appointmentObj['owner'] = owner
         appointmentObj['walker'] = walker
         appointmentForm = AppointmentForm(appointmentObj)
 
-        appointmentForm.is_valid()
+        if(not appointmentForm.is_valid()):
+            errObj = {}
+            errors = appointmentForm.errors.as_data()
+            print(errors)
+            for field,error in errors.items():
+                errObj[field] = error[0].message
+
+            return JsonResponse(errObj,status=400)
+        else:
+            newAppt = appointmentForm.save()
+            return JsonResponse(newAppt.to_dict(),status=201)
+
 
 
 class WalkerAppointmentsView(View):
@@ -111,8 +122,7 @@ class WalkerAppointmentsView(View):
             return JsonResponse({'error':'walker not found'})
 class WalkersView(View):
     def get(self,request):
-        print('this is user',request.user)
-        walkers = Walker.objects.all()
+        walkers = Walker.objects.all().order_by('start_time')
         return JsonResponse({'walkers':[walker.to_dict() for walker in walkers]})
 
     def post(self,request):

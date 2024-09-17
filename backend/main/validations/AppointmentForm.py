@@ -10,18 +10,23 @@ class AppointmentForm(forms.ModelForm):
         cleaned_data = super().clean()
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')
-        dateFormat = '%Y-%m-%d %H:%M'
 
-        bookedAppts = Appointment.objects.filter(start_time = start_time).order_by(start_time)
+        # filter parameters (looking at a specific date for a specific companion)
+        specificDate = start_time.date()
+        companion = cleaned_data.get('companion')
+        bookedAppts = Appointment.objects.filter(start_time__date = specificDate,companion__id=companion.id).order_by('start_time')
 
-        # bookedAppt = Appointment.objects.filter(start_date = )
+        if(end_time < start_time):
+            raise forms.ValidationError(("end time is before start time"))
+        if( not self.isValidSlot(start_time,end_time,bookedAppts)):
+            raise forms.ValidationError(("scheduled appointments conflict"))
 
-        def isValidSlot(targetSlot,scheduledSlots):
-            isValid = True
-            for slot in scheduledSlots:
-                startTime = slot.start_time
-                endTime = slot.end_time
-                if(targetSlot.start_time < endTime and targetSlot.end_time > startTime ):
-                    isValid = False
-
-            return isValid
+    def isValidSlot(self,start_time,end_time,scheduledSlots):
+        isValid = True
+        for slot in scheduledSlots:
+            startTime = slot.start_time
+            endTime = slot.end_time
+            if(start_time < endTime and end_time >= startTime ):
+                isValid = False
+                break
+        return isValid
