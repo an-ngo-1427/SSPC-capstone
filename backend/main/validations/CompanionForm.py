@@ -5,4 +5,4 @@ class CompanionForm(ModelForm):
 
     class Meta:
         model = Companion
-        fields = ['breed','weight','age','companion_notes','pet_address','owner']
+        fields = ['breed','weight','age','companion_notes','pet_address','owner','name']

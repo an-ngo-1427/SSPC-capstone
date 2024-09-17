@@ -12,7 +12,7 @@ from .validations.WalkerForm import WalkerForm
 from .validations.AppointmentForm import AppointmentForm
 from .validations.CompanionForm import CompanionForm
 import json
-from django.core.serializers import serialize
+from django.shortcuts import get_object_or_404
 # Create your views here.
 @ensure_csrf_cookie
 def getCsurf(request):
@@ -86,9 +86,9 @@ class OwnerAppointmentsView(View):
         appointmentObj = request.POST.dict()
 
         companion = Companion.objects.get(pk = companionId)
-        owner = Owner.objects.get(username = request.user)
+        owner = Owner.objects.get(user__username=request.user)
         walker = Walker.objects.get(pk = walkerId)
-
+        print('entered')
         appointmentObj['companion'] = companion
         appointmentObj['owner'] = owner
         appointmentObj['walker'] = walker
@@ -151,7 +151,12 @@ class OneAppointmentView(View):
     def post(self,request):
         companionId,appointment_address,walkerId,ownerId,start_time,end_time,status,appointment_notes,type,media_url = request.POST
         print(companionId)
+
 class CompanionsView(View):
+    def get(self,request):
+        user = get_object_or_404(User,username = request.user)
+        companions = Companion.objects.filter(owner__user=user)
+        return JsonResponse({'companions':[companion.to_dict() for companion in companions]})
     def post(self,request):
         try:
             user = User.objects.get(username = request.user)
