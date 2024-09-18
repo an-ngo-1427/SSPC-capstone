@@ -34,7 +34,8 @@ class UpdateAppointmentForm(forms.ModelForm):
         companionBookedAppts = Appointment.objects.filter(start_time__date = specificDate,companion = companion).order_by('start_time')
         if( not self.isValidSlot(start_time,end_time,companionBookedAppts)):
             raise forms.ValidationError('schedule conflict')
-
+        if(self.instance.companion):
+            raise forms.ValidationError('appointment is already booked')
         if errors:
             raise forms.ValidationError(errors)
     def isValidSlot(self,start_time,end_time,scheduledSlots):
