@@ -55,7 +55,7 @@ AUTH_USER_MODEL = "main.User"
 # ]
 
 ROOT_URLCONF = 'backend.urls'
-
+# LOGIN_URL = 'api/login'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

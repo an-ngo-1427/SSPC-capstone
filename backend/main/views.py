@@ -1,25 +1,36 @@
-from django.shortcuts import render
+
 from django.views import View
-from django.http import JsonResponse,HttpResponse
+from django.http import JsonResponse
 from .models import Appointment,Companion,User,Owner,Walker
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate, login,logout
-from django.db import IntegrityError
-from django.core.exceptions import ValidationError
 from .validations.UserForm import UserForm
 from .validations.WalkerForm import WalkerForm
-from .validations.AppointmentForm import AppointmentForm
+from .validations.CreateAppointmentForm import CreateAppointmentForm
+from.validations.UpdateAppointmentForm import UpdateAppointmentForm
 from .validations.CompanionForm import CompanionForm
 import json
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.utils.functional import wraps
+def auth_decorator(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        # code to be executed before the view
+        if(not request.user.is_authenticated):
+            return JsonResponse({'error':'Forbidden'},status=403)
+        response = view_func(request, *args, **kwargs)
+        # code to be executed after the view
+        return response
+    return wrapper
 # Create your views here.
 @ensure_csrf_cookie
 def getCsurf(request):
     cookies = request.COOKIES.get('csrftoken')
     response = JsonResponse({'csrfToken':cookies})
     return response
-
+@ensure_csrf_cookie
 def signUp(request):
     userForm = UserForm(request.POST)
     if(not userForm.is_valid()):
@@ -39,16 +50,14 @@ def signUp(request):
         Owner.objects.create(user=newUser)
         login(request,newUser)
         return JsonResponse(newUser.to_dict())
-
+@ensure_csrf_cookie
 def logIn(request):
     # data = request.body
     # dataObj = json.loads(data)
     username = request.POST['username']
     password = request.POST['password']
-    print(request.user)
-    print(username,password)
     user = authenticate(request,username = username,password = password)
-    print(user)
+
     if user is not None:
         login(request,user)
         request.session.update({'user':user.to_dict()})
@@ -66,6 +75,7 @@ def signOut(request):
 
 
 class OwnerAppointmentsView(View):
+    @method_decorator(auth_decorator)
     def get(self,request):
         data = json.loads(request.body)
         if('ownerId' not in data):
@@ -77,38 +87,13 @@ class OwnerAppointmentsView(View):
             response = JsonResponse({"appointments":[appointment.to_dict() for appointment in appointments]})
             return response
         except Owner.DoesNotExist:
-            return JsonResponse({'error':'owner could not be found'})
+            return JsonResponse({'error':'owner could not be found'},status = 404)
 
-    def post(self,request):
-        companionId= request.POST['companionId']
-        walkerId  = request.POST['walkerId']
-
-        appointmentObj = request.POST.dict()
-
-        companion = Companion.objects.get(pk = companionId)
-        owner = Owner.objects.get(user__username=request.user)
-        walker = Walker.objects.get(pk = walkerId)
-
-        appointmentObj['companion'] = companion
-        appointmentObj['owner'] = owner
-        appointmentObj['walker'] = walker
-        appointmentForm = AppointmentForm(appointmentObj)
-
-        if(not appointmentForm.is_valid()):
-            errObj = {}
-            errors = appointmentForm.errors.as_data()
-            print(errors)
-            for field,error in errors.items():
-                errObj[field] = error[0].message
-
-            return JsonResponse(errObj,status=400)
-        else:
-            newAppt = appointmentForm.save()
-            return JsonResponse(newAppt.to_dict(),status=201)
 
 
 
 class WalkerAppointmentsView(View):
+    @method_decorator(auth_decorator)
     def get(self,request,*args,**kwargs):
         data = json.loads(request.body)
         if ('walkerId' not in data):
@@ -120,53 +105,134 @@ class WalkerAppointmentsView(View):
             return JsonResponse({'appointments':[appointment.to_dict() for appointment in appointments]})
         except Walker.DoesNotExist:
             return JsonResponse({'error':'walker not found'})
+
+    @method_decorator(auth_decorator)
+    def post(self,request,*args,**kwargs):
+        try:
+            walker = Walker.objects.get(user__username = request.user)
+            appointmentObj = request.POST.dict()
+            appointmentObj['walker'] = walker
+            createAppointmentForm = CreateAppointmentForm(appointmentObj)
+            if(createAppointmentForm.is_valid()):
+                createAppointmentForm.save()
+                appointments = Appointment.objects.filter(walker = walker).order_by('start_time')
+                return JsonResponse({'appointments':[appointment.to_dict() for appointment in appointments]},status=201)
+            else:
+                errObj = {}
+                errors = createAppointmentForm.errors.as_data()
+                for field,error in errors.items():
+                    errObj[field] = error[0].message
+                return JsonResponse(errObj,status = 400)
+        except Walker.DoesNotExist:
+            return JsonResponse({'error':'walker profile can not be found'},status=404)
+
 class WalkersView(View):
     def get(self,request):
-        walkers = Walker.objects.all().order_by('start_time')
+        walkers = Walker.objects.all()
         return JsonResponse({'walkers':[walker.to_dict() for walker in walkers]})
 
+    @method_decorator(auth_decorator)
     def post(self,request):
 
         try:
             user = User.objects.get(username=request.user)
             # walker = Walker.objects.create(user=user,bio=request.POST['bio'],certified = False)
-            dataObj = {'user':user,'bio':request.POST['bio'],'certified':False}
-            walkerForm = WalkerForm(dataObj)
+            walkerObj = request.POST.dict()
+            walkerObj['user'] = user
+
+            walkerForm = WalkerForm(walkerObj)
 
             if walkerForm.is_valid():
                 walker = walkerForm.save()
-                return JsonResponse({'walker':walker.to_dict()})
+                return JsonResponse({'walker':walker.to_dict()},status=201)
             else:
                 errObj = {}
                 errors = walkerForm.errors.as_data()
                 for field,error in errors.items():
                     errObj[field] = error[0].message
-
-                print('this is error',errObj)
-                return JsonResponse({'error':errObj})
+                return JsonResponse({'error':errObj},status=400)
         except User.DoesNotExist:
             return JsonResponse({'error':'user not found'},status = 404)
 
 
+class OneWalkerView(View):
+    def get(self,request,**kwargs):
+        try:
+            walkerId = kwargs['id']
+            walker = Walker.objects.get(id=walkerId)
+            return JsonResponse(walker.to_dict(),status=200)
+        except Walker.DoesNotExist:
+            return JsonResponse({'error':'walker profile could not be found'})
+
+    @method_decorator(auth_decorator)
+    def delete(self,request,**kwargs):
+        try:
+            walker = get_object_or_404(Walker,user__username = request.user)
+            walker = Walker.objects.get(user__username = request.user)
+            walker.delete()
+            return JsonResponse({'message':'walker profile successfully deleted'})
+        except Walker.DoesNotExist:
+            return JsonResponse({'message':'walker profile could not be found'},status=404)
+
 class OneAppointmentView(View):
+    @method_decorator(auth_decorator)
     def get(self,request,*args,**kwargs):
         appointmentId = kwargs['id']
         try:
             appointment = Appointment.objects.get(pk=appointmentId)
-            return JsonResponse(appointment.to_dict())
+            return JsonResponse(appointment.to_dict(),status=200)
         except Appointment.DoesNotExist:
             return JsonResponse({'message':'appointment not found'},status=404)
 
+    @method_decorator(auth_decorator)
+    def post(self,request,*arg,**kwargs):
+        try:
+            companionId = request.POST['companionId']
+            appointmentId = kwargs['id']
+            appointment = Appointment.objects.get(pk=appointmentId)
+            companion = Companion.objects.get(pk=companionId)
 
-    def post(self,request):
-        companionId,appointment_address,walkerId,ownerId,start_time,end_time,status,appointment_notes,type,media_url = request.POST
-        print(companionId)
+
+            appointmentObj = request.POST.dict()
+            appointmentObj['companion'] = companion
+            appointmentObj['owner'] = companion.owner
+
+            updateAppointmentForm = UpdateAppointmentForm(appointmentObj,instance = appointment)
+
+            if(not updateAppointmentForm.is_valid()):
+                errObj = {}
+                errors = updateAppointmentForm.errors.as_data()
+                print(errors)
+                for field,error in errors.items():
+                    errObj[field] = error[0].message
+
+                return JsonResponse(errObj,status=400)
+            else:
+                newAppt = updateAppointmentForm.save()
+                return JsonResponse(newAppt.to_dict(),status=201)
+        except Appointment.DoesNotExist:
+            return JsonResponse({'error':'appointment cant be found'},status=404)
+        except Companion.DoesNotExist:
+            return JsonResponse({'error':'companion cant be found'},status=404)
+    # canceling the appointment by owner
+    @method_decorator(auth_decorator)
+    def delete(self,request,**kwargs):
+        try:
+            appointment = Appointment.objects.get(pk=kwargs['id'],owner__user__username = request.user)
+            appointment.status = 'cancelled'
+            appointment.save()
+            return JsonResponse({'message':'appointment cancelled successfully'})
+        except Appointment.DoesNotExist:
+            return JsonResponse({'error':'appointment cant be found'},status=404)
 
 class CompanionsView(View):
+
+    @method_decorator(auth_decorator)
     def get(self,request):
-        user = get_object_or_404(User,username = request.user)
-        companions = Companion.objects.filter(owner__user=user)
-        return JsonResponse({'companions':[companion.to_dict() for companion in companions]})
+            companions = Companion.objects.filter(owner__user__username = request.user)
+            return JsonResponse({'companions':[companion.to_dict() for companion in companions]})
+
+    @method_decorator(auth_decorator)
     def post(self,request):
         try:
             user = User.objects.get(username = request.user)
@@ -174,26 +240,45 @@ class CompanionsView(View):
             obj = request.POST.dict()
             obj['owner'] = owner
 
-            print(obj)
             companionForm = CompanionForm(obj)
 
             if(companionForm.is_valid()):
-                companion = companionForm.save()
-                return JsonResponse(companion.to_dict())
+                companionForm.save()
+                companions = Companion.objects.filter(owner=owner)
+                return JsonResponse({'companions':[companion.to_dict() for companion in companions]},status=201)
             else:
                 errObj = {}
                 errors = companionForm.errors.as_data()
                 for field,error in errors.items():
-                    print(field,error)
                     errObj[field] = error[0].message
                 return JsonResponse(errObj,status = 400)
         except Owner.DoesNotExist:
             return JsonResponse({'error':'owner could not be found'},status = 404)
 
 
+
 class OneCompanionView(View):
+    @method_decorator(auth_decorator)
     def get(self,request,*args,**kwargs):
-        return
+        owner = get_object_or_404(Owner,user__username = request.user)
+        companion = get_object_or_404(Companion,pk=kwargs['id'],owner = owner)
+        return JsonResponse(companion.to_dict())
+    @method_decorator(auth_decorator)
+    def delete(self,request,**kwargs):
+        try:
+            companion = Companion.objects.get(pk=kwargs['id'],owner__user__username = request.user)
+            companion.delete()
+            return JsonResponse({'message':'companion successfully deleted'},status=200)
+        except Companion.DoesNotExist:
+            return JsonResponse({'message':'companion could not be found'},status=404)
 
 
 # class
+# def auth_decorator(view_func):
+#     def wrapper(request, *args, **kwargs):
+#         # code to be executed before the view
+#         print(request.user)
+#         response = view_func(request, *args, **kwargs)
+#         # code to be executed after the view
+#         return response
+#     return wrapper

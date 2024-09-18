@@ -1,7 +1,7 @@
 from django import forms
 from ..models import Appointment
 from datetime import datetime
-class AppointmentForm(forms.ModelForm):
+class CreateAppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
         fields=['companion','appointment_address','walker','owner','start_time','end_time','status','appointment_notes','type','media_url']
@@ -10,16 +10,18 @@ class AppointmentForm(forms.ModelForm):
         cleaned_data = super().clean()
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')
-
-        # filter parameters (looking at a specific date for a specific companion)
+        walker = cleaned_data.get('walker')
         specificDate = start_time.date()
-        companion = cleaned_data.get('companion')
-        bookedAppts = Appointment.objects.filter(start_time__date = specificDate,companion__id=companion.id).order_by('start_time')
 
-        if(end_time < start_time):
+        if(start_time is None):
+            raise forms.ValidationError('start date required')
+        if(end_time is None):
+            raise forms.ValidationError('end date is required')
+        if(end_time <= start_time):
             raise forms.ValidationError(("end time is before start time"))
-        if( not self.isValidSlot(start_time,end_time,bookedAppts)):
-            raise forms.ValidationError(("scheduled appointments conflict"))
+        walkerBookedAppts = Appointment.objects.filter(start_time__date = specificDate,walker = walker).order_by('start_time')
+        if( not self.isValidSlot(start_time,end_time,walkerBookedAppts)):
+            raise forms.ValidationError("scheduled appointments conflicts")
 
     def isValidSlot(self,start_time,end_time,scheduledSlots):
         isValid = True
