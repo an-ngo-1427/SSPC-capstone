@@ -7,7 +7,8 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth import authenticate, login,logout
 from .validations.UserForm import UserForm
 from .validations.WalkerForm import WalkerForm
-from .validations.AppointmentForm import AppointmentForm
+from .validations.CreateAppointmentForm import CreateAppointmentForm
+from.validations.UpdateAppointmentForm import UpdateAppointmentForm
 from .validations.CompanionForm import CompanionForm
 import json
 from django.contrib.auth.decorators import login_required
@@ -110,14 +111,14 @@ class WalkerAppointmentsView(View):
         walker = get_object_or_404(Walker,user__username = request.user)
         appointmentObj = request.POST.dict()
         appointmentObj['walker'] = walker
-        appointmentForm = AppointmentForm(appointmentObj)
-        if(appointmentForm.is_valid()):
-            appointmentForm.save()
+        createAppointmentForm = CreateAppointmentForm(appointmentObj)
+        if(createAppointmentForm.is_valid()):
+            createAppointmentForm.save()
             appointments = Appointment.objects.filter(walker = walker).order_by('start_time')
             return JsonResponse({'appointments':[appointment.to_dict() for appointment in appointments]},status=201)
         else:
             errObj = {}
-            errors = appointmentForm.errors.as_data()
+            errors = createAppointmentForm.errors.as_data()
             for field,error in errors.items():
                 errObj[field] = error[0].message
             return JsonResponse(errObj,status = 400)
@@ -167,25 +168,24 @@ class OneAppointmentView(View):
         companionId = request.POST['companionId']
         appointmentId = kwargs['id']
         appointment = get_object_or_404(Appointment,id=appointmentId)
-        appointmentObj = request.POST.dict()
-
         companion = get_object_or_404(Companion,id=companionId)
 
+        appointmentObj = request.POST.dict()
         appointmentObj['companion'] = companion
         appointmentObj['owner'] = companion.owner
 
-        appointmentForm = AppointmentForm(appointmentObj,instance = appointment)
+        updateAppointmentForm = UpdateAppointmentForm(appointmentObj,instance = appointment)
 
-        if(not appointmentForm.is_valid()):
+        if(not updateAppointmentForm.is_valid()):
             errObj = {}
-            errors = appointmentForm.errors.as_data()
+            errors = updateAppointmentForm.errors.as_data()
             print(errors)
             for field,error in errors.items():
                 errObj[field] = error[0].message
 
             return JsonResponse(errObj,status=400)
         else:
-            newAppt = appointmentForm.save()
+            newAppt = updateAppointmentForm.save()
             return JsonResponse(newAppt.to_dict(),status=201)
 
 
@@ -222,10 +222,20 @@ class CompanionsView(View):
             return JsonResponse({'error':'owner could not be found'},status = 404)
 
 
-class OneCompanionView(View):
-    def get(self,request,*args,**kwargs):
-        return
 
+class OneCompanionView(View):
+    @method_decorator(auth_decorator)
+    def get(self,request,*args,**kwargs):
+        owner = get_object_or_404(Owner,user__username = request.user)
+        companion = get_object_or_404(Companion,pk=kwargs['id'],owner = owner)
+        return JsonResponse(companion.to_dict())
+    @method_decorator(auth_decorator)
+    def delete(self,request,**kwargs):
+        owner = get_object_or_404(Owner,user__username = request.user)
+        companion = get_object_or_404(Companion,pk=kwargs['id'],owner = owner)
+
+        companion.delete()
+        return JsonResponse({'message':'companion successfully deleted'})
 
 
 # class
