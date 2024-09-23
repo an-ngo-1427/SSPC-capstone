@@ -14,3 +14,7 @@ class UserForm(forms.ModelForm):
     #     }
         # Custom fields
         fields =["username", "email",'first_name','last_name','password']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        print('inside init',cleaned_data.get('email'))

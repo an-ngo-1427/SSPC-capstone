@@ -28,8 +28,8 @@ export default function SignUp(){
             queryClient.invalidateQueries({queryKey:['user']})
             navigate('/profile')
         },
-        onError:()=>{
-            queryClient.invalidateQueries({queryKey:['user']})
+        onError:(error)=>{
+            setFormErr(error.errObj)
         }
     })
 

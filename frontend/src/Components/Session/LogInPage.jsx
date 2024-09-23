@@ -18,6 +18,9 @@ export default function LogInPage(){
         onSuccess:()=>{
             queryClient.invalidateQueries({queryKey:['user']})
             navigate('/')
+        },
+        onError:(error)=>{
+            setFormErr(error.errObj)
         }
     })
 

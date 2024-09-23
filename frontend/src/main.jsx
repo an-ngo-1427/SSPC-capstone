@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
-import {QueryClient,QueryClientProvider} from '@tanstack/react-query'
+import {QueryClient,QueryClientProvider, useQuery} from '@tanstack/react-query'
 const queryClient = new QueryClient()
 import Cookies from 'js-cookie'
 import {
@@ -15,6 +15,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import UserProfile from './Components/Session/UserProfile.jsx'
 import { ChakraProvider } from '@chakra-ui/react'
 import LogInPage from './Components/Session/LogInPage.jsx'
+import { getUser } from './QueryHelpers/sessionQuery.js'
 
 if (process.env.NODE_ENV !== "production") {
   restoreCSRF();
@@ -22,7 +23,7 @@ if (process.env.NODE_ENV !== "production") {
   window.csrfFetch = csrfFetch;
   // window.store = store;
 }
-console.log('this is cookie',Cookies.get())
+
 const router = createBrowserRouter([
   {
     path:'/',
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
   },
   {
     path:"/profile",
-    element:<UserProfile/>
+    element:<UserProfile />
   }
 ]);
 createRoot(document.getElementById('root')).render(

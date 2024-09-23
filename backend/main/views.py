@@ -41,9 +41,8 @@ def signUp(request):
     userForm = UserForm(request.POST)
     if(not userForm.is_valid()):
         errObj = {}
-        errors = userForm.errors.as_data()
-        for field,error in errors.items():
-            errObj[field] = error[0].message
+        for field,error in userForm.errors.items():
+            errObj[field] = error[0]
         return JsonResponse({'error':errObj},status=400)
     else:
         username = request.POST['username']
@@ -125,9 +124,9 @@ class WalkerAppointmentsView(View):
                 return JsonResponse({'appointments':[appointment.to_dict() for appointment in appointments]},status=201)
             else:
                 errObj = {}
-                errors = createAppointmentForm.errors.as_data()
-                for field,error in errors.items():
-                    errObj[field] = error[0].message
+                # errors = createAppointmentForm.errors.as_data()
+                for field,error in createAppointmentForm.errors.items():
+                    errObj[field] = error[0]
                 return JsonResponse(errObj,status = 400)
         except Walker.DoesNotExist:
             return JsonResponse({'error':'walker profile can not be found'},status=404)
