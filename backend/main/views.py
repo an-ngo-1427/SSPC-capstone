@@ -30,7 +30,13 @@ def getCsurf(request):
     cookies = request.COOKIES.get('csrftoken')
     response = JsonResponse({'csrfToken':cookies})
     return response
-@ensure_csrf_cookie
+# @ensure_csrf_cookie
+
+def getUser(request):
+    if(request.user.is_authenticated):
+        user = User.objects.get(username = request.user)
+        return JsonResponse({'user':user.to_dict()},status=200)
+    return JsonResponse({'user':None},status = 404)
 def signUp(request):
     userForm = UserForm(request.POST)
     if(not userForm.is_valid()):
@@ -50,7 +56,7 @@ def signUp(request):
         Owner.objects.create(user=newUser)
         login(request,newUser)
         return JsonResponse(newUser.to_dict())
-@ensure_csrf_cookie
+# @ensure_csrf_cookie
 def logIn(request):
     # data = request.body
     # dataObj = json.loads(data)
