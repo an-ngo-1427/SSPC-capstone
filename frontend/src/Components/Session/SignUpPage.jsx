@@ -74,7 +74,7 @@ export default function SignUp(){
                 <input label = 'firstName' onChange={(e)=>setFirstName(e.target.value)} placeholder='First name' required/>
                 <input label = 'lastName' onChange={(e)=>setLastName(e.target.value)} placeholder='Last name' required/>
                 <input label = 'email' onChange={(e)=>setEmail(e.target.value)} placeholder='email' type='email' required/>
-                <input label = 'password' onChange={(e)=>setPassword(e.target.value)} placeholder = 'password' required/>
+                <input label = 'password' onChange={(e)=>setPassword(e.target.value)} placeholder = 'password' type='password' required/>
                 <input label = 'confirm' onChange={(e)=>setConfirmedPassword(e.target.value)} placeholder='confirm your password' required/>
                 <input label = 'image' onChange={(e)=>setImage(e.target.value)} placeholder='Image url'/>
                 <Button isLoading={userMutation.isPending} type='submit'>Submit</Button>
