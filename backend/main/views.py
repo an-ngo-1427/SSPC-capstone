@@ -82,20 +82,24 @@ def signOut(request):
 class OwnerAppointmentsView(View):
     @method_decorator(auth_decorator)
     def get(self,request):
-        data = json.loads(request.body)
-        if('ownerId' not in data):
-            return JsonResponse({'error':'bad request'})
+        # data = json.loads(request.body)
+        # if('ownerId' not in data):
+        #     return JsonResponse({'error':'bad request'})
         try:
             owner = Owner.objects.get(user__username = request.user)
             print(owner)
-            appointments = Appointment.objects.filter(owner = owner)
-            response = JsonResponse({"appointments":[appointment.to_dict() for appointment in appointments]})
-            return response
+            appointments = Appointment.objects.filter(owner = owner).order_by('start_time')
+            return JsonResponse({"appointments":[appointment.to_dict() for appointment in appointments]})
+
         except Owner.DoesNotExist:
             return JsonResponse({'error':'owner could not be found'},status = 404)
 
 
-
+class AllAppointmentsView(View):
+    @method_decorator(auth_decorator)
+    def get(self,request):
+        appointments = Appointment.objects.all().order_by('start_time')
+        return JsonResponse({'appointments':[appointment.to_dict() for appointment in appointments]})
 
 class WalkerAppointmentsView(View):
     @method_decorator(auth_decorator)
@@ -117,6 +121,7 @@ class WalkerAppointmentsView(View):
             walker = Walker.objects.get(user__username = request.user)
             appointmentObj = request.POST.dict()
             appointmentObj['walker'] = walker
+            appointmentObj['status'] = 'pending'
             createAppointmentForm = CreateAppointmentForm(appointmentObj)
             if(createAppointmentForm.is_valid()):
                 createAppointmentForm.save()
@@ -201,7 +206,7 @@ class OneAppointmentView(View):
             appointmentObj = request.POST.dict()
             appointmentObj['companion'] = companion
             appointmentObj['owner'] = companion.owner
-
+            appointmentObj['status'] = 'booked'
             updateAppointmentForm = UpdateAppointmentForm(appointmentObj,instance = appointment)
 
             if(not updateAppointmentForm.is_valid()):
