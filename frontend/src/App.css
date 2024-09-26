@@ -1,80 +1,59 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background-color: #0effe0;
-  color: #333;
-}
-
+/* Header */
 .header {
-  background-color: #2d6a4f;
-  padding: 20px;
-}
-
-.nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1rem;
 }
 
 .logo {
-  font-size: 2rem;
-  color: #fff;
+  max-width: 150px;
 }
 
 .nav-links {
-  list-style: none;
   display: flex;
-  gap: 15px;
+  gap: 1.5rem;
 }
 
-.nav-links li a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
+@media (max-width: 768px) {
+  .nav-links {
+    display: block;
+    text-align: right;
+  }
 }
+
+/* Hero Section */
 
 .hero {
+  background-size: cover;
+  background-position: center;
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
   text-align: center;
-  padding: 50px 20px;
-  background-color: #95d5b2;
-  color: #2d6a4f;
 }
 
-.cta-button {
-  background-color: #52b788;
-  color: #fff;
-  padding: 10px 20px;
-  border: none;
+.hero-content {
+  background-color: rgba(0, 100, 0, 0.6);
+  /* Solar Punk - green overlay */
+  padding: 2rem;
+  border-radius: 15px;
+}
+
+.cta-button a {
+  text-decoration: none;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  background-color: #FFD700;
+  /* Warm golden yellow */
   border-radius: 5px;
-  cursor: pointer;
+  font-size: 1.25rem;
 }
 
 .cta-button:hover {
-  background-color: #40916c;
+  background-color: #FFA500;
 }
 
-#services {
-  padding: 40px 20px;
-  background-color: #b7e4c7;
-}
-
-.services-container {
-  display: flex;
-  justify-content: space-around;
-}
-
-.service-card {
-  background-color: #52b788;
-  color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  width: 30%;
-  text-align: center;
-}
-
-.footer {
-  text-align: center;
-  padding: 20px;
-  background-color: #2d6a4f;
-  color: #fff;
-}
+/* Footer */
