@@ -20,6 +20,8 @@ function App() {
         <Route path="/reservation" element={<Reservation />} />
         <Route path="/companion" element={<CompanionPage />} />
       </Routes>
+
+      <Footer />
     </Router>
   );
 }

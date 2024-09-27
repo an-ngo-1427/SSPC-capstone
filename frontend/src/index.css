@@ -5,7 +5,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  /* background-color: #242424; */
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -13,6 +13,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+header {
+  background-color: white;
+}
 
 a {
   font-weight: 500;
@@ -28,9 +31,7 @@ button a {
   color: white;
 }
 
-/* a:hover {
-  color: var(--text-color);
-} */
+
 
 body {
   margin: 0;
