@@ -1,4 +1,10 @@
 asgiref==3.8.1
 Django==4.2.16
+django-seed==0.3.1
+Faker==28.4.1
+psycopg2==2.9.9
+python-dateutil==2.9.0.post0
+six==1.16.0
 sqlparse==0.5.1
+toposort==1.10
 typing-extensions==4.12.2

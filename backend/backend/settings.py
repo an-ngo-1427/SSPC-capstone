@@ -53,7 +53,10 @@ AUTH_USER_MODEL = "main.User"
 # SESSION_ENGINE =[
 #     'django.contrib.sessions.backends.signed_cookies'
 # ]
-
+CSRF_TRUSTED_ORIGINS = ["http://localhost:3000"]
+CSRF_ALLOWED_ORIGINS = ["http://localhost:3000"]
+CORS_ORIGINS_WHITELIST = ["http://localhost:3000"]
+ALLOWED_HOSTS = ["localhost"]
 ROOT_URLCONF = 'backend.urls'
 # LOGIN_URL = 'api/login'
 TEMPLATES = [

@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import OwnerAppointmentsView,OneAppointmentView,signUp,signOut,logIn,getCsurf,CompanionsView,OneCompanionView,WalkerAppointmentsView,WalkersView,OneWalkerView
+from .views import OwnerAppointmentsView,OneAppointmentView,signUp,signOut,logIn,getCsurf,CompanionsView,OneCompanionView,WalkerAppointmentsView,WalkersView,OneWalkerView,getUser
 urlpatterns = [
     path('getcsrf/',getCsurf,name='get_csrf'),
+    path('session/',getUser,name='session'),
     path('signup/',signUp,name='signup'),
     path('login/',logIn,name='login'),
     path('signout/',signOut,name='signout'),

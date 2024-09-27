@@ -30,14 +30,19 @@ def getCsurf(request):
     cookies = request.COOKIES.get('csrftoken')
     response = JsonResponse({'csrfToken':cookies})
     return response
-@ensure_csrf_cookie
+# @ensure_csrf_cookie
+
+def getUser(request):
+    if(request.user.is_authenticated):
+        user = User.objects.get(username = request.user)
+        return JsonResponse({'user':user.to_dict()},status=200)
+    return JsonResponse({'user':None},status = 404)
 def signUp(request):
     userForm = UserForm(request.POST)
     if(not userForm.is_valid()):
         errObj = {}
-        errors = userForm.errors.as_data()
-        for field,error in errors.items():
-            errObj[field] = error[0].message
+        for field,error in userForm.errors.items():
+            errObj[field] = error[0]
         return JsonResponse({'error':errObj},status=400)
     else:
         username = request.POST['username']
@@ -50,7 +55,7 @@ def signUp(request):
         Owner.objects.create(user=newUser)
         login(request,newUser)
         return JsonResponse(newUser.to_dict())
-@ensure_csrf_cookie
+# @ensure_csrf_cookie
 def logIn(request):
     # data = request.body
     # dataObj = json.loads(data)
@@ -119,9 +124,9 @@ class WalkerAppointmentsView(View):
                 return JsonResponse({'appointments':[appointment.to_dict() for appointment in appointments]},status=201)
             else:
                 errObj = {}
-                errors = createAppointmentForm.errors.as_data()
-                for field,error in errors.items():
-                    errObj[field] = error[0].message
+                # errors = createAppointmentForm.errors.as_data()
+                for field,error in createAppointmentForm.errors.items():
+                    errObj[field] = error[0]
                 return JsonResponse(errObj,status = 400)
         except Walker.DoesNotExist:
             return JsonResponse({'error':'walker profile can not be found'},status=404)
