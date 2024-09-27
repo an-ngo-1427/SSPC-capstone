@@ -46,8 +46,12 @@ header ul {
   /* background-color: var(--secondary-color); */
   margin: 0 10px;
   border-radius: 10px;
-  border: 1px solid white;
-
+  border: 20px solid white;
+  background-color: var(--quartenary-color);
+  /* height: 50vh; */
+  /* background-image: url("/frontend/src/assets/pepper-trail.jpeg");
+  background-repeat: no-repeat;
+  background-size: contain; */
 }
 
 /* Hero Section */
@@ -61,7 +65,7 @@ header ul {
   justify-content: center;
   color: var(--text-color);
   text-align: center;
-  border-radius: 10px 10px 0 0;
+  border-radius: 50px 50px 0 0;
   margin: 0 0px;
 }
 
@@ -93,17 +97,17 @@ header ul {
 .reservation-container {
   background-image: url("/frontend/src/assets/dog-walking.jpg");
   background-repeat: no-repeat;
-  background-size: contain;
+  background-size: cover;
   background-position: right;
 
   max-width: 100vmax;
-  height: 100vh;
+  /* height: 91%; */
   margin: 0;
   padding: 20px;
-  background-color: white;
+  /* background-color: white; */
   /* Soft light background to give it a solarpunk vibe */
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* border-radius: 10px; */
+  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
 }
 
 .reservation-header {
@@ -143,7 +147,7 @@ header ul {
   height: 2.5rem;
   font-size: 1rem;
   border: 1px solid var(--tertiary-color);
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0 10px;
   background-color: white;
   color: var(--secondary-color);
@@ -177,7 +181,6 @@ button:hover {
 
 .info-section h2 {
   border-radius: 7px;
-  border: 1px solid white;
 }
 
 .info-section p {
@@ -199,7 +202,7 @@ button:hover {
 
 .footer-content {
   background-color: var(--quartenary-color);
-  border-radius: 10px;
+  /* border-radius: 10px; */
   color: var(--text-color);
 }
 
