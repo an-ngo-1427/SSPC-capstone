@@ -1,42 +1,226 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+:root {
+  --text-color: #534734;
+  --primary-color: #aa9f88;
+  /* --primary-color: #94c1a7; */
+  --secondary-color: #d4c6af;
+  --tertiary-color: #534734;
+  --quartenary-color: #eddbca;
+  --background-color: #fff;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 10px;
 }
 
 .logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  max-width: 125px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+header ul {
+  list-style: none;
+  font-family: "Coiny", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  padding-right: 2.5rem;
+  font-size: 26px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+  .nav-links {
+    display: block;
+    text-align: right;
   }
 }
 
-.card {
-  padding: 2em;
+.hero-land {
+  /* background-color: var(--secondary-color); */
+  margin: 0 10px;
+  border-radius: 10px;
+  border: 20px solid white;
+  background-color: var(--quartenary-color);
+  /* height: 50vh; */
+  /* background-image: url("/frontend/src/assets/pepper-trail.jpeg");
+  background-repeat: no-repeat;
+  background-size: contain; */
 }
 
-.read-the-docs {
-  color: #888;
+/* Hero Section */
+.hero {
+  /* background-size: cover; */
+  /* background-position: center; */
+  /* background-color: white; */
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-color);
+  text-align: center;
+  border-radius: 50px 50px 0 0;
+  margin: 0 0px;
+}
+
+.hero-content {
+  /* background-color: rgba(0, 100, 0, 0.6); */
+  /* Solar Punk - green overlay */
+  padding: 2rem;
+  /* border-radius: 15px; */
+}
+
+#company-name {
+  font-family: "Coiny", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: var(--primary-color);
+  margin-top: 0;
+}
+
+.hero p {
+  font-weight: 700;
+}
+
+.cta-button:hover {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+
+
+/* reservation */
+.reservation-container {
+  background-image: url("/frontend/src/assets/dog-walking.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right;
+
+  max-width: 100vmax;
+  /* height: 91%; */
+  margin: 0;
+  padding: 20px;
+  /* background-color: white; */
+  /* Soft light background to give it a solarpunk vibe */
+  /* border-radius: 10px; */
+  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+}
+
+.reservation-header {
+  font-family: "Coiny";
+  font-size: 2rem;
+  color: var(--tertiary-color);
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.who {
+  display: flex;
+  gap: 10px;
+}
+
+.when {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.where {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#who-owner,
+#who-pet,
+#when-date,
+#when-time {
+  width: 18vw;
+}
+
+
+.reservation-form input {
+  height: 2.5rem;
+  font-size: 1rem;
+  border: 1px solid var(--tertiary-color);
+  border-radius: 8px;
+  padding: 0 10px;
+  background-color: white;
+  color: var(--secondary-color);
+}
+
+.reservation-form button {
+  /* padding: 0.3em 1em; */
+  /* font-size: 1em; */
+  /* color: white; */
+  background-color: var(--tertiary-color);
+  /* border-radius: 20px; */
+  height: 40px;
+}
+
+button:hover {
+  border: none;
+}
+
+
+/* landing page */
+.info-section {
+  /* background-color: white; */
+  border-radius: 0 0 10px 10px;
+  margin: 0;
+
+  color: var(--text-color);
+
+  align-items: center;
+  text-align: center;
+}
+
+.info-section h2 {
+  border-radius: 7px;
+}
+
+.info-section p {
+  padding: 0 40px 20px 40px;
+  font-size: 18px;
+}
+
+/* footer */
+
+.footer {
+  border-radius: 10px;
+  background-color: white;
+  margin: 10px;
+  /* box-shadow: 3px 3px 10px rgba(255, 255, 255, 0.6); */
+  padding: 20px 20px 15px 20px;
+
+
+}
+
+.footer-content {
+  background-color: var(--quartenary-color);
+  /* border-radius: 10px; */
+  color: var(--text-color);
+}
+
+.footer-nav {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.social-media {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.footer-content p {
+  text-align: center;
+  font-weight: 700;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
 }
