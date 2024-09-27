@@ -1,6 +1,7 @@
 import React from "react";
-import Hero from "../components/Hero";
-import Footer from "../components/Footer";
+import Hero from "../Components/Landing/Hero.jsx";
+import Footer from "../Components/Landing/Footer";
+import "/Users/giang/Pepper/frontend/src/App.css";
 
 const LandingPage = () => {
   return (

@@ -1,8 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import logo from "/assets/logo.png"; // Update to correct path
+import logo from "/assets/stocklogo.jpeg";
+import "/Users/giang/Pepper/frontend/src/App.css";
 
-const Header = () => {
+function Header() {
   return (
     <header className="header">
       <img src={logo} alt="Pepper's Happy Trails Logo" className="logo" />
@@ -12,18 +13,20 @@ const Header = () => {
             <Link to="/">Home</Link>
           </li>
           <li>
-            <Link to="/companion">Companion Info</Link>
+            <Link to="/about">About Us</Link>
           </li>
           <li>
-            <Link to="/reservation">Reserve a Walk</Link>
-          </li>
-          <li>
-            <Link to="/login">Login</Link>
+            <Link to="/reservation">Join our Trail</Link>
           </li>
         </ul>
       </nav>
+      <div>
+        <button>
+          <Link to="/login">Login</Link>
+        </button>
+      </div>
     </header>
   );
-};
+}
 
 export default Header;

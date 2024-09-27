@@ -24,15 +24,29 @@ const Reservation = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="reservation-form">
-      <h2>Reserve a Walk</h2>
-      <input type="text" name="name" placeholder="Your Name" onChange={handleChange} required />
-      <input type="text" name="petName" placeholder="Pet's Name" onChange={handleChange} required />
-      <input type="date" name="date" onChange={handleChange} required />
-      <input type="time" name="time" onChange={handleChange} required />
-      <input type="text" name="location" placeholder="Location" onChange={handleChange} required />
-      <button type="submit">Submit Reservation</button>
-    </form>
+    <div className="reservation-container">
+      <h2 className="reservation-header">Reserve a Walk</h2>
+      <form onSubmit={handleSubmit} className="reservation-form">
+        <input type="text" name="name" placeholder="Your Name" onChange={handleChange} required />
+        <input
+          type="text"
+          name="petName"
+          placeholder="Pet's Name"
+          onChange={handleChange}
+          required
+        />
+        <input type="date" name="date" onChange={handleChange} required />
+        <input type="time" name="time" onChange={handleChange} required />
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          onChange={handleChange}
+          required
+        />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
   );
 };
 
