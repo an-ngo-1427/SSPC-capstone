@@ -11,10 +11,13 @@ const LandingPage = () => {
 
       <section
         className="info-section"
-        style={{ backgroundImage: "url(/src/assets/pepper-trail.jpeg)" }}>
+        /*style={{ backgroundImage: "url(/src/assets/pepper-trail.jpeg)" }} */
+      >
         <h2>Why Choose Pepper's Happy Trails?</h2>
         <p>
-          We provide exceptional, loving care for your pets, giving them the attention they deserve.
+          Here, at Pepper's, our everyday's goal is to makesure that your pet enjoy all the best
+          that life has to offer. The safety & well-being of your furry loved ones is our utmost
+          priority.
         </p>
       </section>
       {/* <Footer /> */}

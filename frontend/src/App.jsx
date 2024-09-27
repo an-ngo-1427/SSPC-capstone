@@ -14,13 +14,13 @@ function App() {
 
       {/* <Hero />
       <Footer /> */}
-
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/reservation" element={<Reservation />} />
-        <Route path="/companion" element={<CompanionPage />} />
-      </Routes>
-
+      <div className="hero-land">
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/reservation" element={<Reservation />} />
+          <Route path="/companion" element={<CompanionPage />} />
+        </Routes>
+      </div>
       <Footer />
     </Router>
   );

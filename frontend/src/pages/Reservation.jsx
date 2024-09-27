@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import heroImage from "/Users/giang/Pepper/frontend/src/assets/dog-walking.jpg";
 
 const Reservation = () => {
   const [reservation, setReservation] = useState({
@@ -24,22 +25,32 @@ const Reservation = () => {
   };
 
   return (
-    <div className="reservation-container">
+    <div className="reservation-container" style={{ backgroundImage: `url(${heroImage})` }}>
       <h2 className="reservation-header">Reserve a Walk</h2>
       <form onSubmit={handleSubmit} className="reservation-form">
-        <div>
-          <input type="text" name="name" placeholder="Your Name" onChange={handleChange} required />
+        <div className="who">
           <input
+            id="who-owner"
+            type="text"
+            name="name"
+            placeholder="Your Name"
+            onChange={handleChange}
+            required
+          />
+          <input
+            id="who-pet"
             type="text"
             name="petName"
             placeholder="Pet's Name"
             onChange={handleChange}
             required
           />
-          <input type="date" name="date" onChange={handleChange} required />
-          <input type="time" name="time" onChange={handleChange} required />
         </div>
-        <div className="pick-up location">
+        <div className="when">
+          <input id="when-date" type="date" name="date" onChange={handleChange} required />
+          <input id="when-time" type="time" name="time" onChange={handleChange} required />
+        </div>
+        <div className="where">
           <input
             type="text"
             name="location"

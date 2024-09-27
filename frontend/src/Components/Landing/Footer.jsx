@@ -4,19 +4,17 @@ import "/Users/giang/Pepper/frontend/src/App.css";
 const Footer = () => {
   return (
     <footer className="footer">
-      <div>
+      <div className="footer-content">
         <nav className="footer-nav">
-          <a href="">Private Policy</a>
-          <a href="">Terms of Service</a>
-          <a href="">Contact Us</a>
-          <a className="social-media" href="http://instagram.com">
-            Instagram
-          </a>
-          <a className="social-media" href="http://youtube.com">
-            YouTube
-          </a>
+          <a href="#privacy">Private Policy</a>
+          <a href="#terms">Terms of Service</a>
+          <a href="#contact">Contact Us</a>
         </nav>
-        <p>© 2024 Pepper's Happy Trails. All Rights Reserved.</p>
+        <nav className="social-media">
+          <a href="http://instagram.com">Instagram</a>
+          <a href="http://youtube.com">YouTube</a>
+        </nav>
+        <p>&copy; 2024 Pepper's Happy Trails. All Rights Reserved.</p>
       </div>
     </footer>
   );

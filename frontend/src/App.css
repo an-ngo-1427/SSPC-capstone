@@ -2,8 +2,9 @@
   --text-color: #534734;
   --primary-color: #aa9f88;
   /* --primary-color: #94c1a7; */
-  --secondary-color: #b1a38d;
-  --tertiary-color: #534d3b;
+  --secondary-color: #d4c6af;
+  --tertiary-color: #534734;
+  --quartenary-color: #eddbca;
   --background-color: #fff;
 }
 
@@ -25,6 +26,7 @@ header ul {
   list-style: none;
   font-family: "Coiny", system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   padding-right: 2.5rem;
+  font-size: 26px;
 }
 
 .nav-links {
@@ -40,26 +42,34 @@ header ul {
   }
 }
 
-/* Hero Section */
+.hero-land {
+  /* background-color: var(--secondary-color); */
+  margin: 0 10px;
+  border-radius: 10px;
+  border: 1px solid white;
 
+}
+
+/* Hero Section */
 .hero {
-  background-size: cover;
-  background-position: center;
-  height: 100vh;
+  /* background-size: cover; */
+  /* background-position: center; */
+  /* background-color: white; */
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-color);
   text-align: center;
-  border-radius: 10px;
-  margin: 0 10px;
+  border-radius: 10px 10px 0 0;
+  margin: 0 0px;
 }
 
 .hero-content {
   /* background-color: rgba(0, 100, 0, 0.6); */
   /* Solar Punk - green overlay */
   padding: 2rem;
-  border-radius: 15px;
+  /* border-radius: 15px; */
 }
 
 #company-name {
@@ -69,7 +79,7 @@ header ul {
 }
 
 .hero p {
-  font-weight: 700px;
+  font-weight: 700;
 }
 
 .cta-button:hover {
@@ -77,11 +87,18 @@ header ul {
   color: white;
 }
 
-/* reservation */
 
+
+/* reservation */
 .reservation-container {
+  background-image: url("/frontend/src/assets/dog-walking.jpg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: right;
+
   max-width: 100vmax;
-  margin: 10px;
+  height: 100vh;
+  margin: 0;
   padding: 20px;
   background-color: white;
   /* Soft light background to give it a solarpunk vibe */
@@ -97,11 +114,30 @@ header ul {
   margin-bottom: 25px;
 }
 
-.reservation-form {
+.who {
   display: flex;
-  /* flex-direction: colum; */
-  gap: 15px;
+  gap: 10px;
 }
+
+.when {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.where {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+#who-owner,
+#who-pet,
+#when-date,
+#when-time {
+  width: 18vw;
+}
+
 
 .reservation-form input {
   height: 2.5rem;
@@ -110,6 +146,7 @@ header ul {
   border-radius: 10px;
   padding: 0 10px;
   background-color: white;
+  color: var(--secondary-color);
 }
 
 .reservation-form button {
@@ -118,6 +155,7 @@ header ul {
   /* color: white; */
   background-color: var(--tertiary-color);
   /* border-radius: 20px; */
+  height: 40px;
 }
 
 button:hover {
@@ -127,13 +165,25 @@ button:hover {
 
 /* landing page */
 .info-section {
-  background-color: white;
-  border-radius: 10px;
-  margin: 0 10px;
-  height: 100vh;
+  /* background-color: white; */
+  border-radius: 0 0 10px 10px;
+  margin: 0;
+
+  color: var(--text-color);
+
+  align-items: center;
+  text-align: center;
 }
 
+.info-section h2 {
+  border-radius: 7px;
+  border: 1px solid white;
+}
 
+.info-section p {
+  padding: 0 40px 20px 40px;
+  font-size: 18px;
+}
 
 /* footer */
 
@@ -142,9 +192,32 @@ button:hover {
   background-color: white;
   margin: 10px;
   /* box-shadow: 3px 3px 10px rgba(255, 255, 255, 0.6); */
+  padding: 20px 20px 15px 20px;
+
+
+}
+
+.footer-content {
+  background-color: var(--quartenary-color);
+  border-radius: 10px;
+  color: var(--text-color);
 }
 
 .footer-nav {
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.social-media {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.footer-content p {
+  text-align: center;
+  font-weight: 700;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
 }
