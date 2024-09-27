@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllAppointments } from "../../QueryHelpers/sessionQuery";
-import { Button, Container, filter, Menu, MenuButton, MenuItem, MenuList, useDisclosure } from "@chakra-ui/react";
+import { Button, Container, useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
 import {
     Table,
@@ -48,7 +48,7 @@ export default function AppointmentPage() {
     const [filterYear, setFilterYear] = useState(today.getFullYear())
     const [filterDate, setFilterDate] = useState(today.getDate())
     const [daysOfMonth, setDaysOfMonth] = useState(getDaysOfMonth(filterMonth, filterYear))
-    const [selectedAppointment,setSelectedAppointment] = useState()
+    const [selectedAppointment, setSelectedAppointment] = useState()
     const handleMonthSelect = (e) => {
         e.preventDefault()
         setFilterMonth(e.target.value)
@@ -77,7 +77,7 @@ export default function AppointmentPage() {
                 {daysOfMonth.map(date => <Button onClick={(e) => { e.preventDefault(), setFilterDate(date) }}>{date.toLocaleDateString('en-US', { day: 'numeric', weekday: 'short' })}</Button>)}
             </Container>
             <TableContainer>
-                <Table variant='striped' colorScheme='teal' width='80%'>
+                <Table variant='striped' colorScheme='teal' width='70%' margin='auto'>
                     <Thead>
                         <Tr>
                             <Th>Walker</Th>
@@ -87,20 +87,20 @@ export default function AppointmentPage() {
                         </Tr>
                     </Thead>
                     <Tbody>
-                        {data?.appointments.map(appointment => <AppointmentRow appointment={appointment} modalContexts={{ isOpen, onOpen, onClose,setSelectedAppointment }} ></AppointmentRow>)}
+                        {data?.appointments.map(appointment => <AppointmentRow appointment={appointment} modalContexts={{ isOpen, onOpen, onClose, setSelectedAppointment }} ></AppointmentRow>)}
                     </Tbody>
                 </Table>
             </TableContainer>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalCloseButton onClick={()=>setSelectedAppointment({})}/>
-                    <ModalBody>
-                        {/* <Lorem count={2} /> */}
-                        <AppointmentForm appointment={selectedAppointment} modalContexts={{onClose}}/>
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
+                <Modal isOpen={isOpen} onClose={onClose}>
+                    <ModalOverlay />
+                    <ModalContent w='30%' margin='auto' padding='20px' bg='white' color='black'>
+                        <ModalCloseButton onClick={() => setSelectedAppointment({})} />
+                        <ModalBody >
+                            {/* <Lorem count={2} /> */}
+                            <AppointmentForm appointment={selectedAppointment} modalContexts={{ onClose }} />
+                        </ModalBody>
+                    </ModalContent>
+                </Modal>
         </div>
     )
 }

@@ -1,16 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getCompanions } from "../../QueryHelpers/companionQuery"
 import { Card, CardHeader, CardBody, CardFooter, Heading, Stack, StackDivider, Container,Text, Box, Select, Avatar, Textarea,Button } from '@chakra-ui/react'
-import { CalendarIcon,TimeIcon} from '@chakra-ui/icons'
 import { LuDog } from "react-icons/lu";
 import { useState } from "react";
 import { bookAppointment, getOwnerAppointments } from "../../QueryHelpers/appointmentQuery";
 import { useEffect } from "react";
+
 export default function AppointmentForm({appointment,modalContexts}){
     const {onClose} = modalContexts
     const {start_time,end_time} = appointment
     const {data:companions} = useQuery({queryKey:['companions'],queryFn:getCompanions})
-    const {data:appointments} = useQuery({queryKey:['appointments','owner'],queryFn:getOwnerAppointments,})
+    const {data:appointments} = useQuery({queryKey:['appointments','owner'],queryFn:getOwnerAppointments})
     const [bookedCompanionId,setBookedCompanionId] = useState('')
     const [appointmentAddress,setAppointmentAddress] = useState('')
     const [appointmentType,setAppointmentType] = useState('')
@@ -18,12 +18,12 @@ export default function AppointmentForm({appointment,modalContexts}){
     const [formErr,setFormErr] = useState({})
     const clientQuery = useQueryClient()
 
+    console.log('this is appointnment',appointments?.appointments)
     const appointmentMutation = useMutation({
-        mutationFn: ({appointmentId,formData})=>bookAppointment(appointmentId,formData),
-        onSuccess: ()=>{
-            clientQuery.invalidateQueries({queryKey:['appointments','owner']})
-            onClose()
-        },
+        mutationFn: ({appointmentId,formData})=>{ return bookAppointment(appointmentId,formData)},
+        // onSuccess: ()=>{
+        //     clientQuery.invalidateQueries({queryKey:['appointments','owner']})
+        // },
         onError: (error)=>{
             setFormErr(error.errObj)
         }
@@ -56,27 +56,31 @@ export default function AppointmentForm({appointment,modalContexts}){
             return
         }
 
-        const formData = new FormData()
-        formData.append('appoinment_address',appointmentAddress)
+        let formData = new FormData()
+        formData.append('appointment_address',appointmentAddress)
         formData.append('type',appointmentType)
         formData.append('appointment_notes',appointmentNotes)
         formData.append('companionId',bookedCompanionId)
-        console.log('formData',formData.get('appointment_address'))
+
         const appointmentId = appointment.id
-        appointmentMutation.mutate({appointmentId,formData})
+        appointmentMutation.mutate({appointmentId,formData},{onSuccess:()=>{
+            onClose()
+            clientQuery.invalidateQueries(['appointments'])
+            clientQuery.invalidateQueries(['appointments','owner'])
+        },
+        })
     }
 
     return(
-        <Container>
-            <Card>
+            <Card >
                 <CardHeader>
                     <Heading size='md'>Book Appointment</Heading>
                 </CardHeader>
-                <CardBody>
+                <CardBody >
                     <Stack divider={<StackDivider/>}>
-                    <Box>
-                        {Object.keys(formErr).map(err=><div color="red">{err} : {formErr[err]}</div>)}
-                    </Box>
+                        <Box>
+                            {Object.keys(formErr).map(err=><div style={{color:'red'}}>{err} : {formErr[err]}</div>)}
+                        </Box>
                         <Box>
                             <Select value={bookedCompanionId} onChange={(e)=>{setBookedCompanionId(e.target.value)}}>
                                 <option disabled value=''>Select a companion</option>
@@ -96,7 +100,7 @@ export default function AppointmentForm({appointment,modalContexts}){
                         </Box>
                         <Box>
                             <Text>Appointment address</Text>
-                            <Textarea value={appointmentAddress} onChange={()=>setAppointmentAddress(e.target.value)}></Textarea>
+                            <Textarea value={appointmentAddress} onChange={(e)=>setAppointmentAddress(e.target.value)}></Textarea>
                         </Box>
                         <Box>
                             <Select value={appointmentType}
@@ -117,7 +121,6 @@ export default function AppointmentForm({appointment,modalContexts}){
                     <Button disabled={appointmentMutation.isError} isLoading={appointmentMutation.isLoading} onClick={handleBookAppointment}>Book Appointment</Button>
                 </CardFooter>
             </Card>
-        </Container>
 
     )
 }
@@ -125,8 +128,8 @@ export default function AppointmentForm({appointment,modalContexts}){
 function isValidSlot(startTime,endTime,scheduledSlots){
     let isValid = true
     for (let slot of scheduledSlots){
-        bookedStartTime = slot.start_time
-        bookedEndTime = slot.end_time
+        const bookedStartTime = slot.start_time
+        const bookedEndTime = slot.end_time
         if(startTime < bookedEndTime && endTime >= bookedStartTime){
             isValid = false
             break

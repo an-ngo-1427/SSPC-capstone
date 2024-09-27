@@ -17,6 +17,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import LogInPage from './Components/Session/LogInPage.jsx'
 import { getUser } from './QueryHelpers/sessionQuery.js'
 import AppointmentPage from './Components/Appointment/AppointmentPage.jsx'
+import OwnerAppointments from './Components/Appointment/OwnerAppointment.jsx'
 
 if (process.env.NODE_ENV !== "production") {
   restoreCSRF();
@@ -27,8 +28,12 @@ if (process.env.NODE_ENV !== "production") {
 
 const router = createBrowserRouter([
   {
-    path:'/',
-    element:<h1>Home Page</h1>
+    path:'/schedule',
+    element:<OwnerAppointments/>
+  },
+  {
+    path:"/appointments",
+    element:<AppointmentPage />
   },
   {
     path: "/signup",
@@ -43,9 +48,9 @@ const router = createBrowserRouter([
     element:<UserProfile />
   },
   {
-    path:"/appointments",
-    element:<AppointmentPage />
-  }
+    path:'/',
+    element:<h1>Home Page</h1>
+  },
 ]);
 createRoot(document.getElementById('root')).render(
 

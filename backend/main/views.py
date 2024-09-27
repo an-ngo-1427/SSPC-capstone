@@ -82,15 +82,10 @@ def signOut(request):
 class OwnerAppointmentsView(View):
     @method_decorator(auth_decorator)
     def get(self,request):
-        # data = json.loads(request.body)
-        # if('ownerId' not in data):
-        #     return JsonResponse({'error':'bad request'})
         try:
             owner = Owner.objects.get(user__username = request.user)
-            print(owner)
             appointments = Appointment.objects.filter(owner = owner).order_by('start_time')
             return JsonResponse({"appointments":[appointment.to_dict() for appointment in appointments]})
-
         except Owner.DoesNotExist:
             return JsonResponse({'error':'owner could not be found'},status = 404)
 
@@ -98,7 +93,7 @@ class OwnerAppointmentsView(View):
 class AllAppointmentsView(View):
     @method_decorator(auth_decorator)
     def get(self,request):
-        appointments = Appointment.objects.all().order_by('start_time')
+        appointments = Appointment.objects.filter(status='pending').order_by('start_time')
         return JsonResponse({'appointments':[appointment.to_dict() for appointment in appointments]})
 
 class WalkerAppointmentsView(View):
@@ -224,6 +219,8 @@ class OneAppointmentView(View):
             return JsonResponse({'error':'appointment cant be found'},status=404)
         except Companion.DoesNotExist:
             return JsonResponse({'error':'companion cant be found'},status=404)
+
+
     # canceling the appointment by owner
     @method_decorator(auth_decorator)
     def delete(self,request,**kwargs):
