@@ -33,9 +33,9 @@ export default function AppointmentTable({ appointments }) {
     return (
         <>
             <TableContainer height='700px'>
-                <Table variant='simple' colorScheme='teal' width='100%' margin='auto'>
+                <Table variant='simple' colorScheme='#d4c6af' width='100%' margin='auto'>
                     <Thead>
-                        <Tr>
+                        <Tr textAlign={'left'} bg='#d4c6af'>
                             <Th>Companions</Th>
                             <Th>Date</Th>
                             <Th>Start Time</Th>
@@ -51,26 +51,27 @@ export default function AppointmentTable({ appointments }) {
                                     key={appointment.id}
                                     onClick={()=>{onOpen(),setCurrAppointment(appointment)}}
                                     margin='10px'
-                                    _hover={{cursor:'pointer',bg:'teal'}}
+                                    _hover={{cursor:'pointer',bg:'#d4c6af'}}
                                     height="50px"
                                 >
                                     <Td>{appointment.companion.name}</Td>
                                     <Td>{startTime.toLocaleDateString('en-US', options)}</Td>
                                     <Td>{startTime.getHours()}:{startTime.getMinutes()}</Td>
                                     <Td>{endTime.getHours()}:{endTime.getMinutes()}</Td>
-                                    <Td><Badge width='80px' paddingX='5px' bg={statusColorScheme[appointment.status]}>{appointment.status}</Badge></Td>
+                                    <Td textAlign={'center'}><Badge width='80px' paddingX='5px' bg={statusColorScheme[appointment.status]}>{appointment.status}</Badge></Td>
                                 </Tr>
                             )
                         })}
                     </Tbody>
                 </Table>
             </TableContainer>
+            {!appointments.length && <h1>No Appointments Scheduled</h1>}
 
 
             <Modal isOpen={isOpen} onClose={()=>{onClose(),setCurrAppointment()}}>
                 <ModalOverlay />
-                <ModalContent>
-                    <ModalCloseButton />
+                <ModalContent w='30%' margin='auto' padding='20px' bg='white' color='black'>
+                    <ModalCloseButton bg='#d4c6af'/>
                     <ModalBody>
                         <AppointmentDetails appointment={currAppointment} modalContexts={onClose}/>
                     </ModalBody>

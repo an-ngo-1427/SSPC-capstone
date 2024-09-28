@@ -61,4 +61,6 @@ export async function getAllAppointments(){
 }
 export async function logOut(){
     const response = await fetch('api/signout')
+    const data = await response.json()
+    return data
 }

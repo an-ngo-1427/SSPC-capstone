@@ -37,7 +37,6 @@ export default function AppointmentForm({appointment,modalContexts}){
     useEffect(()=>{
         const petAddress = availableComps?.find(companion=>companion.id == bookedCompanionId)?.pet_address
         setAppointmentAddress(petAddress ?? '')
-
     },[bookedCompanionId])
 
     // formatting date object of the appointment to readable string
@@ -113,7 +112,7 @@ export default function AppointmentForm({appointment,modalContexts}){
                         </Box>
                         <Box>
                             <label>Appointment notes</label>
-                            <Textarea onChange={()=>{setAppointmentNotes(e.target.value)}}></Textarea>
+                            <Textarea onChange={(e)=>{setAppointmentNotes(e.target.value)}}></Textarea>
                         </Box>
                     </Stack>
                 </CardBody>

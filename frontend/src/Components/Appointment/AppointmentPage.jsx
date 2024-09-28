@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllAppointments } from "../../QueryHelpers/sessionQuery";
-import { Button, Container, useDisclosure } from "@chakra-ui/react";
+import { Button, Container, Heading, useDisclosure } from "@chakra-ui/react";
 import { useState } from "react";
 import {
     Table,
@@ -65,6 +65,7 @@ export default function AppointmentPage() {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
         <div>
+            <Heading>Book Appointments</Heading>
             <Container>
                 <select value={filterMonth} onChange={handleMonthSelect}>
                     {months.map(month => <option value={month[1]}>{month[0]}</option>)}
@@ -73,28 +74,31 @@ export default function AppointmentPage() {
                     {years.map(year => <option value={year}>{year}</option>)}
                 </select>
             </Container>
-            <Container>
+            {/* <Container>
                 {daysOfMonth.map(date => <Button onClick={(e) => { e.preventDefault(), setFilterDate(date) }}>{date.toLocaleDateString('en-US', { day: 'numeric', weekday: 'short' })}</Button>)}
-            </Container>
-            <TableContainer>
-                <Table variant='striped' colorScheme='teal' width='70%' margin='auto'>
+            </Container> */}
+            <TableContainer margin='auto'>
+                <Table variant='striped' colorScheme='#d4c6af' width='1000px' margin='auto'>
                     <Thead>
-                        <Tr>
+                        <Tr bg='#d4c6af'>
                             <Th>Walker</Th>
                             <Th>Date</Th>
                             <Th>Start Time</Th>
                             <Th>End Time</Th>
                         </Tr>
                     </Thead>
+
                     <Tbody>
-                        {data?.appointments.map(appointment => <AppointmentRow appointment={appointment} modalContexts={{ isOpen, onOpen, onClose, setSelectedAppointment }} ></AppointmentRow>)}
+                        {data?.appointments.map(appointment => <AppointmentRow key={appointment.id}appointment={appointment} modalContexts={{ isOpen, onOpen, onClose, setSelectedAppointment }} ></AppointmentRow>)}
                     </Tbody>
+
                 </Table>
             </TableContainer>
+            {!data?.appointments.length && <h1 margin='auto'>No Availabilities</h1>}
                 <Modal isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
                     <ModalContent w='30%' margin='auto' padding='20px' bg='white' color='black'>
-                        <ModalCloseButton onClick={() => setSelectedAppointment({})} />
+                        <ModalCloseButton bg='#aa9f88'onClick={() => setSelectedAppointment({})} />
                         <ModalBody >
                             {/* <Lorem count={2} /> */}
                             <AppointmentForm appointment={selectedAppointment} modalContexts={{ onClose }} />

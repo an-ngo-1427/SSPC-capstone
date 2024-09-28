@@ -21,8 +21,8 @@ export default function OwnerAppointments() {
         <h1>appointments</h1>
         <Tabs width='1000px' variant="unstyled">
             <TabList>
-                <Tab>Upcoming appointments</Tab>
-                <Tab>Past Appointments</Tab>
+                <Tab bg='#534734'>Upcoming appointments</Tab>
+                <Tab bg='#534734'>Past Appointments</Tab>
             </TabList>
 
             <TabPanels>

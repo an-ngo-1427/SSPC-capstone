@@ -72,11 +72,8 @@ def logIn(request):
         return JsonResponse({"error":"incorrect credentials"},status=400)
 
 def signOut(request):
-    try:
         logout(request)
-        return JsonResponse({"message":"logout successfully"})
-    except Exception as e:
-        return JsonResponse({"error":e})
+        return JsonResponse({"user":None})
 
 
 class OwnerAppointmentsView(View):

@@ -5,7 +5,7 @@ import { Card, CardHeader, CardBody, CardFooter,Stack,StackDivider,Box } from '@
 function AppointmentDetails({appointment,modalContexts}){
 
     if(!appointment) return
-    const {start_time,end_time,type,appointment_notes,appointment_address} = appointment
+    const {start_time,end_time,type,appointment_notes,appointment_address,status} = appointment
     const startDate = new Date(start_time).toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})
     const startTime = new Date(start_time).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
     const endTime = new Date(end_time).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'})
@@ -57,7 +57,7 @@ function AppointmentDetails({appointment,modalContexts}){
                     </Stack>
                 </CardBody>
                 <CardFooter>
-                    <Button variant='ghost' _hover={{bg:'red'}}onClick={handleCancelAppointment}>Cancel Appointment</Button>
+                    {status != 'cancelled' &&  <Button variant='ghost' _hover={{bg:'red'}} onClick={handleCancelAppointment}>Cancel Appointment</Button>}
                 </CardFooter>
             </Card>
     )
