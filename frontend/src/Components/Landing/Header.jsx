@@ -26,7 +26,7 @@ function Header({ user }) {
     mutationFn:logOut,
     onSuccess:()=>clienQuery.invalidateQueries(['user'])
   })
-  console.log(data.user)
+
   return (
     <header className="header">
       <img src={logo} alt="Pepper's Happy Trails Logo" className="logo" />
